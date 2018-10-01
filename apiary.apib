@@ -1,0 +1,961 @@
+FORMAT: 1A
+HOST: https://petapi-ef69f.firebaseapp.com/
+
+# Pet Project API
+
+API Interno del Proyecto de Grado.
+Los recursos solo pueden ser ejecutados por el usuario "admin"
+
+# Errors
+Nota: Traducir los errores
+
+* for Data Errors
+    * `400` for when the requested information is incomplete or malformed.
+    * `422` for when the requested information is okay, but invalid.
+    * `404` for when everything is okay, but the resource doesn’t exist.
+    * `409` for when a conflict of data exists, even with valid information.
+
+* for Auth Errors
+
+    * `401` for when an access token isn’t provided, or is invalid.
+    * `403` for when an access token is valid, but requires more privileges.
+
+* for Standard Statuses
+
+    * `200` for when everything is okay.
+    * `204` for when everything is okay, but there’s no content to return.
+    * `500` for when the server throws an error, completely unexpected.
+
+
+## Group Recursos de Sesión
+Recursos relacionados a una sesión
+
+## Recurso /session [/session]
+Nota: Revisar endpoint
+
+### Iniciar Sesión [POST]
+Autentifica al usuario con la base de datos y retorna el token de sesión
+
++ Request (application/json)
+
+    + Attributes
+        + Email(string, required)
+        + Password(string, required)
+
+    + Body
+    
+            {
+                "Email": "User-421",
+                "Password": "User-421"
+            }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "Email": "User-421",
+                "Password": "User-421"
+            }
+            
++ Response 400 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 400,
+                "Error": "REQUIRED_FIELD_MISSING",
+                "Description": "One or more required fields are missing."
+              }
+            }
+            
++ Response 422 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 422,
+                "Error": "FIELDS_VALIDATION_ERROR",
+                "Description": "One or more fields raised validation errors."
+              }
+            }
+            
++ Response 404 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 404,
+                "Error": "ACCOUNT_NOT_FOUND",
+                "Description": "The account does not exist."
+              }
+            }
+            
++ Response 409 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 409,
+                "Error": "EMAIL_ALREADY_EXISTS",
+                "Description": "An account already exists with that email."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "ERROR_LOGIN_USER",
+                "Description": "An error ocurred when trying to login the user."
+              }
+            }
+
+### Cerrar Sesión [DELETE]
+Cerrar la sesión de usuario
+Nota: Buscar ejemplos
+Nota: There'll be a reponse for testing
+
++ Request (application/json)
+
+    + Headers
+
+            Autorization : Bearer Token
+
++ Response 204
+
+## Group Recursos de Usuario
+Recursos relacionados a los usuarios
+
+## Recurso /users [/users]
+
+### Listar todos los usuarios [GET]
+
+Obtener una lista de todos los usuarios registrados.
+Solo puede ser ejecutado por un usuario administrador autentificado.
+
++ Request (application/json)
+
+    + Headers
+
+            Autorization : Bearer Token
+
++ Response 200 (application/json)
+        
+    + Body
+
+            [
+                {
+                    "Id": "User-421",
+                    "PetIds": [
+                        "Pet-181"
+                    ],
+                    "Names": "User-421",
+                    "LastNames": "User-421",
+                    "Address": "User-421",
+                    "Email": "User-421",
+                    "Password": "1343423",
+                    "Phones": [],
+                }
+            ]
+            
++ Response 401 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 401,
+                "Error": "INVALID_ACCESS_TOKEN",
+                "Description": "Access token is invalid or expired."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "SERVER_ERROR",
+                "Description": "An error occurred trying to get the list of users."
+              }
+            }
+
+### Crear un usuario [POST]
+
+Registrar un nuevo usuario. 
+Solo puede ser ejecutado por un usuario administrador autentificado.
+Recibe un objeto JSON.
+
++ Request (application/json)
+
+    + Attributes
+        + Names(string, optional)
+        + LastNames(string, optional)
+        + Address(string, optional)
+        + Email(string, required)
+        + Password(string, required)
+        + Phones(array[string], optional)
+        
+    + Headers
+            
+            Autorization : Bearer Token
+        
+    + Body
+    
+            {
+                "Names": "User-421",
+                "LastNames": "User-421",
+                "Address": "User-421",
+                "Email": "User-421",
+                "Password": "User-421",
+                "Phones": [
+                    "13123213", 
+                    "13324"
+                ]
+            }
+
++ Response 201 (application/json)
+
+    + Body
+    
+            {
+                "Id": "User-421",
+                "PetIds": [],
+                "Names": "User-421",
+                "LastNames": "User-421",
+                "Address": "User-421",
+                "Email": "User-421",
+                "Password": "1343423",
+                "Phones": [],
+                "Links" : {
+                    "Self" : "/api/users/User-421",
+                    "Pets" : "/api/users/User-421/pets"
+                    "Web" : "/app#/projects/Projects-421"
+                }
+            }
+            
++ Response 400 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 400,
+                "Error": "REQUIRED_FIELD_MISSING",
+                "Description": "One or more required fields are missing."
+              }
+            }
+            
++ Response 422 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 422,
+                "Error": "FIELDS_VALIDATION_ERROR",
+                "Description": "One or more fields raised validation errors."
+              }
+            }
+            
++ Response 409 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 409,
+                "Error": "EMAIL_ALREADY_EXISTS",
+                "Description": "An account already exists with that email."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "ERROR_CREATING_USER",
+                "Description": "An error ocurred when trying to create the user."
+              }
+            }
+            
+
+## Recurso /users/{user\_id} [/users/{user_id}]
+
+### Listar un usuario [GET]
+
+Obtener la información de un solo usuario.
+Puede ser ejecutado por un usuario administrador.
+Nota: Revisar si error 403 se implementará.
+
++ Request (application/json)
+
+    + Headers
+
+            Autorization : Bearer Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "Id": "User-421",
+                "PetIds": [
+                    "Pet-181"
+                ],
+                "Names": "User-421",
+                "LastNames": "User-421",
+                "Address": "User-421",
+                "Email": "User-421",
+                "Password": "1343423",
+                "Phones": [],
+                "Links" : {
+                    "Self" : "/api/users/User-421",
+                    "Pets" : "/api/users/User-421/pets"
+                    "Web" : "/app#/projects/Projects-421"
+                }
+            }
+
++ Response 401 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 401,
+                "Error": "INVALID_ACCESS_TOKEN",
+                "Description": "Access token is invalid or expired."
+              }
+            }
+            
++ Response 403 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 403,
+                "Error": "FORBIDDEN",
+                "Description": "You cannot get the information of other users."
+              }
+            }
+            
++ Response 404 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 404,
+                "Error": "USER_NOT_FOUND",
+                "Description": "The user does not exist."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "SERVER_ERROR",
+                "Description": "An error occurred trying to get the user."
+              }
+            }
+
+### Modificar un usuario [PUT]
+
+Modificar la información de un usuario.
+Puede ser ejecutado por un usuario administrador.
+
++ Request (application/json)
+
+    + Attributes
+        + Names(string, optional)
+        + LastNames(string, optional)
+        + Address(string, optional)
+        + Email(string, required)
+        + Password(string, required)
+        + Phones(array[string], optional)
+        
+    + Headers
+            
+            Autorization : Bearer Token
+        
+    + Body
+    
+            {
+                "Names": "User-421",
+                "LastNames": "User-421",
+                "Address": "User-421",
+                "Email": "User-421",
+                "Password": "User-421",
+                "Phones": [
+                    "13123213", 
+                    "13324"
+                ]
+            }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "Id": "User-421",
+                "PetIds": [],
+                "Names": "User-421",
+                "LastNames": "User-421",
+                "Address": "User-421",
+                "Email": "User-421",
+                "Password": "1343423",
+                "Phones": [],
+                "Links" : {
+                    "Self" : "/api/users/User-421",
+                    "Pets" : "/api/users/User-421/pets"
+                    "Web" : "/app#/projects/Projects-421"
+                }
+            }
+            
++ Response 400 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 400,
+                "Error": "REQUIRED_FIELD_MISSING",
+                "Description": "One or more required fields are missing."
+              }
+            }
+            
++ Response 422 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 422,
+                "Error": "FIELDS_VALIDATION_ERROR",
+                "Description": "One or more fields raised validation errors."
+              }
+            }
+            
++ Response 409 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 409,
+                "Error": "EMAIL_ALREADY_EXISTS",
+                "Description": "An account already exists with that email."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "ERROR_UPDATING_USER",
+                "Description": "An error ocurred when trying to update the user."
+              }
+            }
+            
+
+### Eliminar un Usuario [DELETE]
+
++ Request (application/json)
+
+    + Headers
+
+            Autorization : Bearer Token
+
++ Response 204
+
++ Response 401 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 401,
+                "Error": "INVALID_ACCESS_TOKEN",
+                "Description": "Access token is invalid or expired."
+              }
+            }
+            
++ Response 404 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 404,
+                "Error": "USER_NOT_FOUND",
+                "Description": "The user does not exist."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "SERVER_ERROR",
+                "Description": "An error occurred trying to get the user."
+              }
+            }
+
+
+## Recurso /me [/me]
+
+### Listar propio usuario [GET]
+
+Obtener la información propia de un usuario autentificado.
+Nota: Revisar si este endpoint se implementará.
+Nota: Revisar endpoint me/pets
+Nota: Revisar relacionado a error 403 de "Listar un usuario"
+Nota: Este recurso no será implementado.
+
++ Request (application/json)
+
+    + Headers
+
+            Autorization : Bearer Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "Id": "User-421",
+                "PetIds": [
+                    "Pet-181"
+                ],
+                "Names": "User-421",
+                "LastNames": "User-421",
+                "Address": "User-421",
+                "Email": "User-421",
+                "Password": "1343423",
+                "Phones": [],
+                "Links" : {
+                    "Self" : "/api/me",
+                    "Pets" : "/api/me/pets"
+                    "Web" : "/app#/projects/Projects-421"
+                }
+            }
+
+
+## Group Recursos de Mascotas
+
+## Recurso /users/{user\_id}/pets [/users/{user_id}/pets]
+
+### Obtener lista de Mascotas de un Usuario [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Autorization : Bearer Token
+
++ Response 200 (application/json)
+        
+    + Body
+
+            [
+                {
+                    "Id": "Pet-421",
+                    "UserId": "User-456",
+                    "Names": "User-421",
+                    "Description": "User-421",
+                    "PetMessage": "User-421",
+                    "Sex": "User-421",
+                    "Breed": "1343423",
+                    "QRLink": "",
+                    "Picture": "",
+                    "Links" : {
+                        "Self" : "/api/pets/Pet-619",
+                        "User" : "/api/users/User-421"
+                    }
+                }
+            ]
+            
++ Response 401 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 401,
+                "Error": "INVALID_ACCESS_TOKEN",
+                "Description": "Access token is invalid or expired."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "SERVER_ERROR",
+                "Description": "An error occurred trying to get the list of users."
+              }
+            }
+
+### Crear una mascota para un usuario [POST]
+
+Agregar una mascota al perfil de usuario.
+Nota: Ver si el atributo "PetMessage" se implementará
+Nota: Ver como seria el body para el atributo "Picture"
+
++ Request (application/json)
+
+    + Attributes
+        + Name(string, required)
+        + Description(string, optional)
+        + PetMessage(string, optional)
+        + Breed(string, optional)
+        + Sex: Macho, Hembra (string, required)
+        + Picture(string, optional)
+
+    + Headers
+            
+            Autorization : Bearer Token
+        
+    + Body
+    
+            {
+                "Name": "Tom",
+                "Description": "Esta es mi mascota",
+                "PetMessage": "Ayudame a regresar a casa",
+                "Sex": "Macho",
+                "Breed": "Corgi",
+                "Picture": ""
+            }
+
++ Response 201 (application/json)
+
+    + Body
+    
+            {
+                "Id": "Pet-619",
+                "Name": "Tom",
+                "Description": "",
+                "PetMessage": "",
+                "Sex": "Macho",
+                "Breed": "Corgi",
+                "UserId": "User-421",
+                "QRLink": "https://",
+                "Picture": "",
+                "Links": {
+                    "Self": "/api/pet/Pet-619",
+                    "User": "/api/user/User-421"
+                }
+            }
+            
++ Response 400 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 400,
+                "Error": "REQUIRED_FIELD_MISSING",
+                "Description": "One or more required fields are missing."
+              }
+            }
+            
++ Response 422 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 422,
+                "Error": "FIELDS_VALIDATION_ERROR",
+                "Description": "One or more fields raised validation errors."
+              }
+            }
+            
++ Response 409 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 409,
+                "Error": "NAME_ALREADY_EXISTS",
+                "Description": "An pet already exists with that name."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "ERROR_CREATING_PET",
+                "Description": "An error ocurred when trying to create the user."
+              }
+            }
+            
+
+## Recurso pets/{pet\_id} [/pets/{pet_id}]
+
+### Obtener la información de una mascota [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Autorization : Bearer Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "Id": "Pet-421",
+                "UserId": "User-456",
+                "Names": "User-421",
+                "Description": "User-421",
+                "PetMessage": "User-421",
+                "Sex": "User-421",
+                "Breed": "1343423",
+                "QRLink": "",
+                "Picture": "",
+                "Links" : {
+                    "Self" : "/api/pets/Pet-619",
+                    "User" : "/api/users/User-421"
+                }
+            }
+
++ Response 401 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 401,
+                "Error": "INVALID_ACCESS_TOKEN",
+                "Description": "Access token is invalid or expired."
+              }
+            }
+            
++ Response 404 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 404,
+                "Error": "PET_NOT_FOUND",
+                "Description": "The pet does not exist."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "SERVER_ERROR",
+                "Description": "An error occurred trying to get the user."
+              }
+            }
+
+### Modificar una mascota [PUT]
+
++ Request (application/json)
+
+    + Attributes
+        + Name(string, required)
+        + Description(string, optional)
+        + PetMessage(string, optional)
+        + Breed(string, optional)
+        + Sex: Macho, Hembra (string, required)
+        + Picture(string, optional)
+        
+    + Headers
+            
+            Autorization : Bearer Token
+        
+    + Body
+    
+            {
+                "Name": "Tom",
+                "Description": "Esta es mi mascota",
+                "PetMessage": "Ayudame a regresar a casa",
+                "Sex": "Macho",
+                "Breed": "Corgi",
+                "Picture": ""
+            }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "Id": "Pet-619",
+                "Name": "Tom",
+                "Description": "",
+                "PetMessage": "",
+                "Sex": "Macho",
+                "Breed": "Corgi",
+                "UserId": "User-421",
+                "QRLink": "https://",
+                "Picture": "",
+                "Links": {
+                    "Self": "/api/pet/Pet-619",
+                    "User": "/api/user/User-421"
+                }
+            }
+            
++ Response 400 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 400,
+                "Error": "REQUIRED_FIELD_MISSING",
+                "Description": "One or more required fields are missing."
+              }
+            }
+            
++ Response 422 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 422,
+                "Error": "FIELDS_VALIDATION_ERROR",
+                "Description": "One or more fields raised validation errors."
+              }
+            }
+            
++ Response 409 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 409,
+                "Error": "EMAIL_ALREADY_EXISTS",
+                "Description": "An account already exists with that email."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "ERROR_UPDATING_USER",
+                "Description": "An error ocurred when trying to update the user."
+              }
+            }
+
+### Eliminar una mascota [DELETE]
+
++ Request (application/json)
+
+    + Headers
+
+            Autorization : Bearer Token
+
++ Response 204
+
++ Response 401 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 401,
+                "Error": "INVALID_ACCESS_TOKEN",
+                "Description": "Access token is invalid or expired."
+              }
+            }
+            
++ Response 404 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 404,
+                "Error": "USER_NOT_FOUND",
+                "Description": "The user does not exist."
+              }
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "SERVER_ERROR",
+                "Description": "An error occurred trying to get the user."
+              }
+            }
+
+## Group Recursos de Servicio
+
+## Recurso /health [/health]
+
+### Revisar estado API [GET]
+Obtener el estado del API.
+
+No require autentificacioón.
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+              "Status": "Running", 
+              "Version": "1.0.0"
+            }
+            
++ Response 500 (application/json)
+
+    + Body
+    
+            {
+              "Error": {
+                "Status": 500,
+                "Error": "SERVER_ERRROR",
+                "Description": "The server is down."
+              }
+            }
